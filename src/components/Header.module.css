@@ -1,0 +1,20 @@
+.container{
+    display: flex;
+    justify-content: center;
+    padding: 1rem;
+}
+
+
+.h1 {
+   
+    font-size: 3rem;
+    color: rgb(13, 45, 87);
+
+  }
+  
+
+.img{
+    width: 4rem;
+    height: 4rem;
+    border: 2px solid black;
+}
