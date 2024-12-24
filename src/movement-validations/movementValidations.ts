@@ -1,7 +1,8 @@
 import { BoardState, Color, Piece } from "../types/types";
+import { isKingInCheck } from "./isKingInCheck";
 import { isPathClear } from "./isPathClear";
 
-const knightMoves = [-17, -15, -10, -6, 6, 10, 15, 17];
+export const knightMoves = [-17, -15, -10, -6, 6, 10, 15, 17];
 
 export const isKnightMoveLegal = (
     origin: number,
@@ -175,7 +176,13 @@ export const isKingMoveLegal = (
 
     const targetPiece = boardState[target];
     if (targetPiece && targetPiece.color === color) return false;
-    
+
+    const simulatedBoard = [...boardState];
+    simulatedBoard[target] = simulatedBoard[origin];
+    simulatedBoard[origin] = null;
+
+    if (isKingInCheck(target, simulatedBoard, color)) return false;
+   
     return true;
 }
 

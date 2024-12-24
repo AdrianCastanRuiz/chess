@@ -17,13 +17,11 @@ const Board = ({ turn, boardState, setBoardState, setTurn }: BoardProps) => {
     const handleSquareClick = (index: number) => {
         const clickedPiece = boardState[index];
 
-        // Selección de una pieza
         if (clickedPiece && clickedPiece.color === turn) {
             setSelectedPiece({ index, piece: clickedPiece });
             return;
         }
 
-        // Movimiento de una pieza
         if (selectedPiece) {
 
             const target = index;
