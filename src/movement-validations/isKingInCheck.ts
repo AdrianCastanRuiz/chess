@@ -7,20 +7,25 @@ export const isKingInCheck = (
     color: Color,
 ): boolean => {
 
+
     const enemyColor: Color = color === 'white' ? 'black' : 'white';
     const pawnCaptureOffsets: number[] = color === 'white' ? [-9, -7] : [7, 9];
 
     for (const offset of pawnCaptureOffsets) {
         const target = kingPosition + offset;
+
         if (
             target >= 0 &&
             target < 64 &&
+            Math.abs(Math.floor(kingPosition / 8) - Math.floor(target / 8)) === 1 &&
             (boardState[target]?.figure === '♙' || boardState[target]?.figure === '♟') &&
             boardState[target]?.color === enemyColor
         ) {
             return true;
         }
     }
+
+    // Verificar amenazas de caballos
     for (const offset of knightMoves) {
         const target = kingPosition + offset;
         if (
@@ -33,6 +38,7 @@ export const isKingInCheck = (
         }
     }
 
+    // Verificar amenazas en líneas rectas (torre o dama)
     const directionsStraight = [1, -1, 8, -8];
     for (const direction of directionsStraight) {
         if (isThreatenedInDirection(kingPosition, direction, boardState, enemyColor, ['♖', '♜', '♕', '♛'])) {
@@ -40,30 +46,30 @@ export const isKingInCheck = (
         }
     }
 
+    // Verificar amenazas en diagonales (alfil o dama)
     const directionsDiagonal = [9, -9, 7, -7];
     for (const direction of directionsDiagonal) {
         if (isThreatenedInDirection(kingPosition, direction, boardState, enemyColor, ['♗', '♝', '♕', '♛'])) {
             return true;
         }
-
     }
 
+    // Verificar amenaza del otro rey
     const kingOffsets = [-9, -8, -7, -1, 1, 7, 8, 9];
     for (const offset of kingOffsets) {
         const target = kingPosition + offset;
         if (
             target >= 0 &&
             target < 64 &&
-            boardState[target]?.figure === '♔' || boardState[target]?.figure === '♚'  &&
-            boardState[target].color === enemyColor
+            Math.abs(Math.floor(kingPosition / 8) - Math.floor(target / 8)) <= 1 &&
+            boardState[target]?.figure === (enemyColor === 'white' ? '♔' : '♚') &&
+            boardState[target]?.color === enemyColor
         ) {
             return true;
         }
     }
 
-
-
-        return false;
+    return false;
 };
 
 const isThreatenedInDirection = (
@@ -75,15 +81,23 @@ const isThreatenedInDirection = (
 ): boolean => {
     let current = position + direction;
 
-    while (current >= 0 && current < 64 && Math.abs(Math.floor(current / 8) - Math.floor((current - direction) / 8)) <= 1) {
+    while (
+        current >= 0 &&
+        current < 64 &&
+        (
+            direction === 8 || direction === -8 || // Movimiento vertical
+            Math.floor(current / 8) === Math.floor((current - direction) / 8) // Movimiento horizontal en la misma fila
+        )
+    ) {
+
         const piece = boardState[current];
         if (piece) {
             if (piece.color === enemyColor && threateningPieces.includes(piece.figure)) {
                 return true;
             }
-            break;
+            break; // Si hay una pieza bloqueando, detenemos la búsqueda
         }
         current += direction;
     }
     return false;
-}
+};

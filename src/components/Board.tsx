@@ -26,14 +26,16 @@ const Board = ({ turn, boardState, setBoardState, setTurn }: BoardProps) => {
 
             const target = index;
 
-            if (!isLegalMove(selectedPiece, boardState, target, turn)) return;
-
+            if (!isLegalMove(selectedPiece, boardState, target, turn)) {
+                console.log("ilegal move")
+                return;
+            }
             const newBoardState = [...boardState];
-            newBoardState[selectedPiece.index] = null; 
-            newBoardState[index] = selectedPiece.piece; 
+            newBoardState[selectedPiece.index] = null;
+            newBoardState[index] = selectedPiece.piece;
             setBoardState(newBoardState);
-            setSelectedPiece(null); 
-            setTurn(turn === 'white' ? 'black' : 'white'); 
+            setSelectedPiece(null);
+            setTurn(turn === 'white' ? 'black' : 'white');
         }
     };
 
@@ -47,9 +49,8 @@ const Board = ({ turn, boardState, setBoardState, setTurn }: BoardProps) => {
             <div
                 id={"square" + i}
                 key={i}
-                className={`${styles.square} ${(row + col) % 2 === 0 ? styles.black : styles.white} ${
-                    selectedPiece?.index === i ? styles.selected : ''
-                }`}
+                className={`${styles.square} ${(row + col) % 2 === 0 ? styles.black : styles.white} ${selectedPiece?.index === i ? styles.selected : ''
+                    }`}
                 onClick={() => handleSquareClick(i)}
             >
                 {piece && (

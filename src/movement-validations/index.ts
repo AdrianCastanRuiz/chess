@@ -1,4 +1,5 @@
 import { Color, Piece, SelectedPiece } from "../types/types";
+import { isKingInCheck } from "./isKingInCheck";
 import { 
     isBishopMoveLegal,
     isKingMoveLegal,
@@ -11,42 +12,77 @@ import {
 export const isLegalMove = (
     selectedPiece: SelectedPiece,
     boardState: (Piece | null)[],
-    index: number,
+    targetIndex: number,
     turn: Color
 ): boolean => {
-    const target = index;
     const origin = selectedPiece.index;
     const { figure, color } = selectedPiece.piece;
 
     if (color !== turn) return false;
 
+    const kingPosition = boardState.findIndex(
+        piece => piece?.figure === (turn === 'white' ? '♔' : '♚')
+    );
+
+    const isInCheck = isKingInCheck(kingPosition, boardState, turn);
+
+    let isValidMove = false;
+
     switch (figure) {
         case "♘": 
         case "♞": 
-            return isKnightMoveLegal(origin, target, boardState, color);
+            isValidMove = isKnightMoveLegal(origin, targetIndex, boardState, color);
+            break;
 
         case "♙": 
         case "♟": 
-            return isPawnMoveLegal(origin, target, boardState, color);
+            isValidMove = isPawnMoveLegal(origin, targetIndex, boardState, color);
+            break;
 
         case "♗": 
         case "♝": 
-            return isBishopMoveLegal(origin, target, boardState, color);
+            isValidMove = isBishopMoveLegal(origin, targetIndex, boardState, color);
+            break;
 
         case "♖": 
         case "♜": 
-            return isRockMoveLegal(origin, target, boardState, color);
+            isValidMove = isRockMoveLegal(origin, targetIndex, boardState, color);
+            break;
 
         case "♕":
         case "♛":
-            return isQueenMoveLegal(origin, target, boardState, color);
+            isValidMove = isQueenMoveLegal(origin, targetIndex, boardState, color);
+            break;
         
         case "♔":
         case "♚":
-            return isKingMoveLegal(origin, target, boardState, color);
+            console.log("ola")
+            isValidMove = isKingMoveLegal(origin, targetIndex, boardState, color);
+            console.log(isValidMove)
+            break;
 
         default:
-            // Otros movimientos de piezas aún no implementados
             return false;
     }
+
+    if (!isValidMove) return false;
+
+    // Si el rey está en jaque, comprobar que el movimiento lo resuelve
+    if (isInCheck) {
+        console.log("hola")
+        const simulatedBoard = [...boardState];
+        simulatedBoard[targetIndex] = simulatedBoard[origin];
+        simulatedBoard[origin] = null;
+
+        const newKingPosition =
+            figure === '♔' || figure === '♚' ? targetIndex : kingPosition;
+
+            console.log(newKingPosition)
+
+        if (isKingInCheck(newKingPosition, simulatedBoard, turn)) {
+            return false; // El movimiento no resuelve el jaque
+        }
+    }
+
+    return true;
 };

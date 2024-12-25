@@ -180,8 +180,11 @@ export const isKingMoveLegal = (
     const simulatedBoard = [...boardState];
     simulatedBoard[target] = simulatedBoard[origin];
     simulatedBoard[origin] = null;
+    console.log(simulatedBoard)
 
-    if (isKingInCheck(target, simulatedBoard, color)) return false;
+    if (isKingInCheck(target, simulatedBoard, color)){
+        return false;
+    } 
    
     return true;
 }
