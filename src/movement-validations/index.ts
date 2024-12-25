@@ -20,13 +20,8 @@ export const isLegalMove = (
 
     if (color !== turn) return false;
 
-    const kingPosition = boardState.findIndex(
-        piece => piece?.figure === (turn === 'white' ? '♔' : '♚')
-    );
-    console.log(kingPosition)
+    
 
-    const isInCheck = isKingInCheck(kingPosition, boardState, turn);
-    console.log(isInCheck)
 
     let isValidMove = false;
 
@@ -67,19 +62,22 @@ export const isLegalMove = (
 
     if (!isValidMove) return false;
 
-    if (isInCheck) {
+ 
         const simulatedBoard = [...boardState];
         simulatedBoard[targetIndex] = simulatedBoard[origin];
         simulatedBoard[origin] = null;
 
-        const newKingPosition =
-            figure === '♔' || figure === '♚' ? targetIndex : kingPosition;
+        const kingPosition = simulatedBoard.findIndex(
+            piece => piece?.figure === (turn === 'white' ? '♔' : '♚')
+        );
+    
 
 
-        if (isKingInCheck(newKingPosition, simulatedBoard, turn)) {
+        if (isKingInCheck(kingPosition, simulatedBoard, turn)) {
+            console.log("invalid move, king is in check")
             return false; 
         }
-    }
+    
 
     return true;
 };
