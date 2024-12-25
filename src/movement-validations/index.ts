@@ -1,9 +1,9 @@
-import { Color, Piece, SelectedPiece } from "../types/types";
+import { Color, Piece, RockStatus, SelectedPiece } from "../types/types";
 import { isKingInCheck } from "./isKingInCheck";
-import { 
+import {
     isBishopMoveLegal,
     isKingMoveLegal,
-    isKnightMoveLegal, 
+    isKnightMoveLegal,
     isPawnMoveLegal,
     isQueenMoveLegal,
     isRockMoveLegal
@@ -13,36 +13,37 @@ export const isLegalMove = (
     selectedPiece: SelectedPiece,
     boardState: (Piece | null)[],
     targetIndex: number,
-    turn: Color
+    turn: Color,
+    whiteKingMoved: boolean,
+    blackKingMoved: boolean,
+    whiteRookMoved:RockStatus,
+    blackRookMoved:RockStatus
 ): boolean => {
     const origin = selectedPiece.index;
     const { figure, color } = selectedPiece.piece;
-
+    console.log(whiteRookMoved)
     if (color !== turn) return false;
-
-    
-
 
     let isValidMove = false;
 
     switch (figure) {
-        case "♘": 
-        case "♞": 
+        case "♘":
+        case "♞":
             isValidMove = isKnightMoveLegal(origin, targetIndex, boardState, color);
             break;
 
-        case "♙": 
-        case "♟": 
+        case "♙":
+        case "♟":
             isValidMove = isPawnMoveLegal(origin, targetIndex, boardState, color);
             break;
 
-        case "♗": 
-        case "♝": 
+        case "♗":
+        case "♝":
             isValidMove = isBishopMoveLegal(origin, targetIndex, boardState, color);
             break;
 
-        case "♖": 
-        case "♜": 
+        case "♖":
+        case "♜":
             isValidMove = isRockMoveLegal(origin, targetIndex, boardState, color);
             break;
 
@@ -50,10 +51,10 @@ export const isLegalMove = (
         case "♛":
             isValidMove = isQueenMoveLegal(origin, targetIndex, boardState, color);
             break;
-        
+
         case "♔":
         case "♚":
-            isValidMove = isKingMoveLegal(origin, targetIndex, boardState, color);
+            isValidMove = isKingMoveLegal(origin, targetIndex, boardState, color, whiteKingMoved, blackKingMoved, whiteRookMoved, blackRookMoved);
             break;
 
         default:
@@ -62,22 +63,22 @@ export const isLegalMove = (
 
     if (!isValidMove) return false;
 
- 
-        const simulatedBoard = [...boardState];
-        simulatedBoard[targetIndex] = simulatedBoard[origin];
-        simulatedBoard[origin] = null;
 
-        const kingPosition = simulatedBoard.findIndex(
-            piece => piece?.figure === (turn === 'white' ? '♔' : '♚')
-        );
-    
+    const simulatedBoard = [...boardState];
+    simulatedBoard[targetIndex] = simulatedBoard[origin];
+    simulatedBoard[origin] = null;
+
+    const kingPosition = simulatedBoard.findIndex(
+        piece => piece?.figure === (turn === 'white' ? '♔' : '♚')
+    );
 
 
-        if (isKingInCheck(kingPosition, simulatedBoard, turn)) {
-            console.log("invalid move, king is in check")
-            return false; 
-        }
-    
+
+    if (isKingInCheck(kingPosition, simulatedBoard, turn)) {
+        console.log("entra aqui")
+        return false;
+    }
+
 
     return true;
 };

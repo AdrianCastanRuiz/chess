@@ -10,4 +10,7 @@ export interface SelectedPiece {
     piece: Piece,
 }
 export type BoardState = (Piece | null)[];
-
+export interface RockStatus {
+    left: boolean,
+    right: boolean,
+}

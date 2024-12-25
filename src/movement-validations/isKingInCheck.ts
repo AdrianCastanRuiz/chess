@@ -21,6 +21,7 @@ export const isKingInCheck = (
             (boardState[target]?.figure === '♙' || boardState[target]?.figure === '♟') &&
             boardState[target]?.color === enemyColor
         ) {
+            console.log("amenaza peon")
             return true;
         }
     }
@@ -34,6 +35,8 @@ export const isKingInCheck = (
             (boardState[target]?.figure === "♘" || boardState[target]?.figure === "♞") &&
             boardState[target]?.color === enemyColor
         ) {
+            console.log("amenaza caballo")
+
             return true;
         }
     }
@@ -42,6 +45,8 @@ export const isKingInCheck = (
     const directionsStraight = [1, -1, 8, -8];
     for (const direction of directionsStraight) {
         if (isThreatenedInDirection(kingPosition, direction, boardState, enemyColor, ['♖', '♜', '♕', '♛'])) {
+            console.log("amenaza torre o dama")
+
             return true;
         }
     }
@@ -50,6 +55,8 @@ export const isKingInCheck = (
     const directionsDiagonal = [9, -9, 7, -7];
     for (const direction of directionsDiagonal) {
         if (isThreatenedInDirection(kingPosition, direction, boardState, enemyColor, ['♗', '♝', '♕', '♛'])) {
+            console.log("amenaza alfil o dama")
+
             return true;
         }
     }
@@ -65,6 +72,8 @@ export const isKingInCheck = (
             boardState[target]?.figure === (enemyColor === 'white' ? '♔' : '♚') &&
             boardState[target]?.color === enemyColor
         ) {
+            console.log("amenaza el otro rey")
+
             return true;
         }
     }
@@ -86,10 +95,11 @@ const isThreatenedInDirection = (
         current < 64 &&
         (
             direction === 8 || direction === -8 || // Movimiento vertical
-            Math.floor(current / 8) === Math.floor((current - direction) / 8) || // Movimiento horizontal
+            (Math.floor(current / 8) === Math.floor(position / 8) && (direction === 1 || direction === -1)) || // Movimiento horizontal en la misma fila
             Math.abs(Math.floor(current / 8) - Math.floor((current - direction) / 8)) === 1 // Movimiento diagonal
         )
     ) {
+
         const piece = boardState[current];
         if (piece) {
             if (piece.color === enemyColor && threateningPieces.includes(piece.figure)) {
