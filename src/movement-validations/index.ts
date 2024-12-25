@@ -23,8 +23,10 @@ export const isLegalMove = (
     const kingPosition = boardState.findIndex(
         piece => piece?.figure === (turn === 'white' ? '♔' : '♚')
     );
+    console.log(kingPosition)
 
     const isInCheck = isKingInCheck(kingPosition, boardState, turn);
+    console.log(isInCheck)
 
     let isValidMove = false;
 
@@ -56,9 +58,7 @@ export const isLegalMove = (
         
         case "♔":
         case "♚":
-            console.log("ola")
             isValidMove = isKingMoveLegal(origin, targetIndex, boardState, color);
-            console.log(isValidMove)
             break;
 
         default:
@@ -67,9 +67,7 @@ export const isLegalMove = (
 
     if (!isValidMove) return false;
 
-    // Si el rey está en jaque, comprobar que el movimiento lo resuelve
     if (isInCheck) {
-        console.log("hola")
         const simulatedBoard = [...boardState];
         simulatedBoard[targetIndex] = simulatedBoard[origin];
         simulatedBoard[origin] = null;
@@ -77,10 +75,9 @@ export const isLegalMove = (
         const newKingPosition =
             figure === '♔' || figure === '♚' ? targetIndex : kingPosition;
 
-            console.log(newKingPosition)
 
         if (isKingInCheck(newKingPosition, simulatedBoard, turn)) {
-            return false; // El movimiento no resuelve el jaque
+            return false; 
         }
     }
 

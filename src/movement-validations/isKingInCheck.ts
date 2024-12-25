@@ -86,10 +86,10 @@ const isThreatenedInDirection = (
         current < 64 &&
         (
             direction === 8 || direction === -8 || // Movimiento vertical
-            Math.floor(current / 8) === Math.floor((current - direction) / 8) // Movimiento horizontal en la misma fila
+            Math.floor(current / 8) === Math.floor((current - direction) / 8) || // Movimiento horizontal
+            Math.abs(Math.floor(current / 8) - Math.floor((current - direction) / 8)) === 1 // Movimiento diagonal
         )
     ) {
-
         const piece = boardState[current];
         if (piece) {
             if (piece.color === enemyColor && threateningPieces.includes(piece.figure)) {

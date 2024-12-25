@@ -27,7 +27,6 @@ const Board = ({ turn, boardState, setBoardState, setTurn }: BoardProps) => {
             const target = index;
 
             if (!isLegalMove(selectedPiece, boardState, target, turn)) {
-                console.log("ilegal move")
                 return;
             }
             const newBoardState = [...boardState];
