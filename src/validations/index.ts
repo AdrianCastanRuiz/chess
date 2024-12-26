@@ -14,17 +14,20 @@ export const isLegalMove = (
     boardState: (Piece | null)[],
     targetIndex: number,
     turn: Color,
-    whiteKingMoved: boolean,
-    blackKingMoved: boolean,
-    whiteRookMoved:RockStatus,
-    blackRookMoved:RockStatus
+    whiteKingMoved?: boolean,
+    blackKingMoved?: boolean,
+    whiteRookMoved?:RockStatus,
+    blackRookMoved?:RockStatus
 ): boolean => {
     const origin = selectedPiece.index;
     const { figure, color } = selectedPiece.piece;
-    console.log(whiteRookMoved)
+
     if (color !== turn) return false;
 
     let isValidMove = false;
+
+
+
 
     switch (figure) {
         case "♘":
@@ -75,7 +78,6 @@ export const isLegalMove = (
 
 
     if (isKingInCheck(kingPosition, simulatedBoard, turn)) {
-        console.log("entra aqui")
         return false;
     }
 

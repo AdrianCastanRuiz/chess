@@ -38,3 +38,6 @@
     background-color: rgb(241, 136, 136);
     border: 2px solid red;
   }
+  .kingIsInCheckandSelected {
+    border: 2px solid yellow;
+  }

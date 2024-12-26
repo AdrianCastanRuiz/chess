@@ -3,9 +3,6 @@ import { isKingInCheck } from "./isKingInCheck";
 import { isPathClear } from "./isPathClear";
 
 export const knightMoves = [-17, -15, -10, -6, 6, 10, 15, 17];
-const castleWhiteTargets = [58, 62];
-const castleBlackTargets = [2, 6];
-
 
 export const isKnightMoveLegal = (
     origin: number,
@@ -165,10 +162,10 @@ export const isKingMoveLegal = (
     target: number,
     boardState: BoardState,
     color: Color,
-    whiteKingMoved: boolean,
-    blackKingMoved: boolean,
-    whiteRookMoved: RockStatus,
-    blackRookMoved: RockStatus,
+    whiteKingMoved?: boolean,
+    blackKingMoved?: boolean,
+    whiteRookMoved?: RockStatus,
+    blackRookMoved?: RockStatus,
 ): boolean => {
     const rowOrigin = Math.floor(origin / 8);
     const colOrigin = origin % 8;
@@ -181,11 +178,10 @@ export const isKingMoveLegal = (
 
     // Verificar enroque
     if (color === "white" && !whiteKingMoved) {
-        if (target === 58 && !whiteRookMoved.left) {
-            console.log("hola")
-            // Enroque largo blanco
+        if (target === 58 && !whiteRookMoved?.left) {
+           
             if (
-                !isPathClear(origin, target - 1, boardState, 0, -1) || // Camino despejado
+                !isPathClear(origin, target - 1, boardState, 0, -1) || 
                 isKingInCheck(origin, boardState, color) || // Rey no está en jaque
                 isKingInCheck(origin - 1, boardState, color) || // Rey no entra en jaque
                 isKingInCheck(origin - 2, boardState, color) // Rey no termina en jaque
@@ -193,7 +189,7 @@ export const isKingMoveLegal = (
                 return false;
             }
             return true;
-        } else if (target === 62 && !whiteRookMoved.right) {
+        } else if (target === 62 && !whiteRookMoved?.right) {
             // Enroque largo blanco
             if (
                 !isPathClear(origin, target + 1, boardState, 0, 1) || // Camino despejado
@@ -206,7 +202,7 @@ export const isKingMoveLegal = (
             return true;
         }
     } else if (color === "black" && !blackKingMoved) {
-        if (target === 2 && !blackRookMoved.left) {
+        if (target === 2 && !blackRookMoved?.left) {
             // Enroque corto negro
             if (
                 !isPathClear(origin, target - 1, boardState, 0, -1) || // Camino despejado
@@ -217,7 +213,7 @@ export const isKingMoveLegal = (
                 return false;
             }
             return true;
-        } else if (target === 6 && !blackRookMoved.right) {
+        } else if (target === 6 && !blackRookMoved?.right) {
             // Enroque largo negro
             if (
                 !isPathClear(origin, target + 1, boardState, 0, 1) || // Camino despejado
@@ -232,7 +228,7 @@ export const isKingMoveLegal = (
     }
 
     // Movimiento normal del rey
-    if (!isOneStepMove) return false;
+    if (!isOneStepMove) return false; 
 
     const targetPiece = boardState[target];
     if (targetPiece && targetPiece.color === color) return false;
@@ -242,10 +238,8 @@ export const isKingMoveLegal = (
     simulatedBoard[origin] = null;
 
     if (isKingInCheck(target, simulatedBoard, color)) {
-        console.log("Con este movimiento entra en jaque");
         return false;
     }
-
     return true;
 };
 

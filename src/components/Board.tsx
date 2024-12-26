@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import styles from './Board.module.css';
 import { BoardState, Color, Piece, RockStatus, SelectedPiece } from '../types/types';
-import { isLegalMove } from '../movement-validations/index.ts';
-import { isKingInCheck } from '../movement-validations/isKingInCheck.ts';
+import { isLegalMove } from '../validations/index.ts';
+import { isKingInCheck } from '../validations/isKingInCheck.ts';
+import { isCheckMate } from '../validations/isCheckMate.ts';
 
 interface BoardProps {
     turn: Color;
@@ -13,7 +14,7 @@ interface BoardProps {
 
 const Board = ({ turn, boardState, setBoardState, setTurn }: BoardProps) => {
     const [selectedPiece, setSelectedPiece] = useState<null | SelectedPiece>(null);
-    const [check, setIsCheck] = useState<'♔' | '♚' | '' >('');
+    const [check, setIsCheck] = useState<'♔' | '♚' | ''>('');
     const [whiteKingMoved, setWhiteKingMoved] = useState<boolean>(false);
     const [blackKingMoved, setBlackKingMoved] = useState<boolean>(false);
 
@@ -22,21 +23,21 @@ const Board = ({ turn, boardState, setBoardState, setTurn }: BoardProps) => {
 
     const handleSquareClick = (index: number) => {
         const clickedPiece = boardState[index];
-    
+
         if (clickedPiece && clickedPiece.color === turn) {
             setSelectedPiece({ index, piece: clickedPiece });
             return;
         }
-    
+
         if (selectedPiece) {
             const target = index;
             const { piece } = selectedPiece;
             const { figure } = piece;
-    
+
             // Actualizar si el rey se mueve
             if (figure === '♔' && !whiteKingMoved) setWhiteKingMoved(true);
             if (figure === '♚' && !blackKingMoved) setBlackKingMoved(true);
-    
+
             // Actualizar si las torres se mueven
             if (figure === '♖') {
                 if (selectedPiece.index === 56) setWhiteRookMoved(prev => ({ ...prev, left: true }));
@@ -46,16 +47,16 @@ const Board = ({ turn, boardState, setBoardState, setTurn }: BoardProps) => {
                 if (selectedPiece.index === 0) setBlackRookMoved(prev => ({ ...prev, left: true }));
                 if (selectedPiece.index === 7) setBlackRookMoved(prev => ({ ...prev, right: true }));
             }
-    
+
             // Verificar si el movimiento es legal
             if (!isLegalMove(selectedPiece, boardState, target, turn, whiteKingMoved, blackKingMoved, whiteRookMoved, blackRookMoved)) {
                 return;
             }
-    
+
             const newBoardState = [...boardState];
             newBoardState[selectedPiece.index] = null;
             newBoardState[index] = selectedPiece.piece;
-    
+
             // Manejar el movimiento de la torre durante el enroque
             if (figure === '♔' && (target === 58 || target === 62) && !whiteKingMoved) {
                 // Enroque blanco
@@ -76,24 +77,25 @@ const Board = ({ turn, boardState, setBoardState, setTurn }: BoardProps) => {
                     newBoardState[5] = { figure: '♜', color: 'black' }; // Nueva posición
                 }
             }
-    
+
             setBoardState(newBoardState);
-    
+
             // Verificar si el rey enemigo está en jaque
             const enemyKingPosition = newBoardState.findIndex(
                 piece => piece?.figure === (turn === 'white' ? '♚' : '♔')
             );
             if (isKingInCheck(enemyKingPosition, newBoardState, turn === 'white' ? 'black' : 'white')) {
+                if(isCheckMate(enemyKingPosition, newBoardState,turn === 'white' ? 'black' : 'white' )) alert("checkmate")
                 setIsCheck(turn === 'white' ? '♚' : '♔');
             } else {
                 setIsCheck('');
             }
-    
+
             setSelectedPiece(null);
             setTurn(turn === 'white' ? 'black' : 'white');
         }
     };
-    
+
 
     const squares = [];
     for (let i = 0; i < 64; i++) {
@@ -109,6 +111,7 @@ const Board = ({ turn, boardState, setBoardState, setTurn }: BoardProps) => {
                     ${styles.square} ${(row + col) % 2 === 0 ? styles.black : styles.white} 
                     ${selectedPiece?.index === i ? styles.selected : ''}
                     ${check && piece?.figure === check ? styles.kingIsInCheck : ''}
+                    ${check && piece?.figure === check && selectedPiece?.piece.figure === piece.figure ? styles.kingIsInCheckandSelected : ''}
                 `}
                 onClick={() => handleSquareClick(i)}
             >
