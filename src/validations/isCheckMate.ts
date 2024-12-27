@@ -10,10 +10,8 @@ export const isCheckMate = (
     boardState: BoardState,
     color: Color
 ): boolean => {
-    // Movimientos posibles del rey
     const kingOffsets = [-9, -8, -7, -1, 1, 7, 8, 9];
-
-    // Verificar si el rey puede moverse a una casilla segura
+   console.log(boardState)
     for (const offset of kingOffsets) {
         const target = kingPosition + offset;
 
@@ -24,31 +22,29 @@ export const isCheckMate = (
         ) {
             const targetPiece = boardState[target];
 
-            // Verificar que no sea una casilla ocupada por una pieza aliada
             if (targetPiece && targetPiece.color === color) {
                 continue;
             }
 
-            // Simular el movimiento del rey
             const simulatedBoard = [...boardState];
             simulatedBoard[target] = simulatedBoard[kingPosition];
             simulatedBoard[kingPosition] = null;
 
             if (!isKingInCheck(target, simulatedBoard, color)) {
-                return false; // El rey puede escapar del jaque
+                return false; 
             }
         }
     }
 
-    // Verificar si otras piezas pueden salvar al rey
     for (let i = 0; i < 64; i++) {
         const piece = boardState[i];
 
         if (piece && piece.color === color && piece.figure !== "♔" && piece.figure !== "♚") {
+            console.log(i, piece.figure, piece.color)
             const possibleTargets = getPossibleTargets(i, piece, boardState);
 
             for (const target of possibleTargets) {
-                // Simular el movimiento
+
                 if (
                     isLegalMove(
                         { index: i, piece },
@@ -57,20 +53,18 @@ export const isCheckMate = (
                         color
                     )
                 ) {
+                    console.log(i, piece.figure, piece.color)
                     const simulatedBoard = [...boardState];
                     simulatedBoard[target] = simulatedBoard[i];
                     simulatedBoard[i] = null;
-
-                    // Verificar si el rey sigue en jaque
                     if (!isKingInCheck(kingPosition, simulatedBoard, color)) {
-                        return false; // Otro movimiento salva al rey
+                        return false; 
                     }
                 }
             }
         }
     }
 
-    // Si no hay movimientos legales que salven al rey, es jaque mate
     return true;
 };
 

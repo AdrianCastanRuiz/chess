@@ -4,6 +4,7 @@ import { BoardState, Color, Piece, RockStatus, SelectedPiece } from '../types/ty
 import { isLegalMove } from '../validations/index.ts';
 import { isKingInCheck } from '../validations/isKingInCheck.ts';
 import { isCheckMate } from '../validations/isCheckMate.ts';
+import GameOverModal from './GameOverModal.tsx';
 
 interface BoardProps {
     turn: Color;
@@ -13,13 +14,15 @@ interface BoardProps {
 }
 
 const Board = ({ turn, boardState, setBoardState, setTurn }: BoardProps) => {
+
     const [selectedPiece, setSelectedPiece] = useState<null | SelectedPiece>(null);
     const [check, setIsCheck] = useState<'♔' | '♚' | ''>('');
     const [whiteKingMoved, setWhiteKingMoved] = useState<boolean>(false);
     const [blackKingMoved, setBlackKingMoved] = useState<boolean>(false);
-
     const [whiteRookMoved, setWhiteRookMoved] = useState<RockStatus>({ left: false, right: false });
     const [blackRookMoved, setBlackRookMoved] = useState<RockStatus>({ left: false, right: false });
+    const [gameOver, setGameOver] = useState<any>(null);
+
 
     const handleSquareClick = (index: number) => {
         const clickedPiece = boardState[index];
@@ -85,7 +88,13 @@ const Board = ({ turn, boardState, setBoardState, setTurn }: BoardProps) => {
                 piece => piece?.figure === (turn === 'white' ? '♚' : '♔')
             );
             if (isKingInCheck(enemyKingPosition, newBoardState, turn === 'white' ? 'black' : 'white')) {
-                if(isCheckMate(enemyKingPosition, newBoardState,turn === 'white' ? 'black' : 'white' )) alert("checkmate")
+                if(isCheckMate(enemyKingPosition, newBoardState,turn === 'white' ? 'black' : 'white' )) {
+                    alert("mate")
+                    setGameOver({
+                        winner: turn as Color,
+                        reason: "checkmate",
+                    })
+                }
                 setIsCheck(turn === 'white' ? '♚' : '♔');
             } else {
                 setIsCheck('');
@@ -124,7 +133,12 @@ const Board = ({ turn, boardState, setBoardState, setTurn }: BoardProps) => {
         );
     }
 
-    return <div className={styles.board}>{squares}</div>;
+    return(
+        <>
+                <div className={styles.board}>{squares}</div>;
+                {gameOver && <GameOverModal winner={gameOver.winner} reason={gameOver.reason} setGameOver={setGameOver} />}
+                </>
+    ) 
 };
 
 export default Board;
