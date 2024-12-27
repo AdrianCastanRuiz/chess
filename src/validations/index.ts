@@ -16,8 +16,8 @@ export const isLegalMove = (
     turn: Color,
     whiteKingMoved?: boolean,
     blackKingMoved?: boolean,
-    whiteRookMoved?:RockStatus,
-    blackRookMoved?:RockStatus
+    whiteRookMoved?: RockStatus,
+    blackRookMoved?: RockStatus
 ): boolean => {
     const origin = selectedPiece.index;
     const { figure, color } = selectedPiece.piece;
@@ -25,9 +25,6 @@ export const isLegalMove = (
     if (color !== turn) return false;
 
     let isValidMove = false;
-
-
-
 
     switch (figure) {
         case "♘":

@@ -6,7 +6,11 @@ const GameSetup = () => {
 
     const [turn, setTurn] = useState<Color>('white');
     const [boardState, setBoardState] = useState<(BoardState)>(Array(64).fill(null));
-    const [resetGame, setResetGame] = useState<boolean>(false);
+    const [resetBoard, setResetBoard] = useState<boolean>(false);
+const resetGame = ()=>{
+    setResetBoard(!resetBoard);
+    setTurn('white');
+}
 
     useEffect(() => {
 
@@ -30,7 +34,7 @@ const GameSetup = () => {
         }
         setBoardState(initialBoard);
 
-    }, [resetGame]);
+    }, [resetBoard]);
 
     return (
         <>
@@ -40,6 +44,7 @@ const GameSetup = () => {
                 boardState={boardState}
                 setBoardState={setBoardState}
                 setTurn={setTurn}
+                resetGame={resetGame}
             />
 
         </>

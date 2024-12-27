@@ -14,3 +14,7 @@ export interface RockStatus {
     left: boolean,
     right: boolean,
 }
+export interface GameOver {
+    winner: 'White' | 'Black',
+    reason: 'checkmate' | 'resignation',
+}

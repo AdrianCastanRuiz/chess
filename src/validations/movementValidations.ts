@@ -32,12 +32,10 @@ export const isPawnMoveLegal = (
     const direction = color === 'white' ? -8 : 8;
     const startRow = color === 'white' ? 6 : 1;
 
-    // Movimiento hacia adelante
     if (target === origin + direction && !boardState[target]) {
         return true;
     }
 
-    // Movimiento doble desde la posición inicial
     if (
         Math.floor(origin / 8) === startRow &&
         target === origin + direction * 2 &&
@@ -57,12 +55,11 @@ export const isPawnMoveLegal = (
         const originColumn = origin % 8;
         const targetColumn = target % 8;
 
-        // Verifica que no se salga de los bordes
         if (
-            (originColumn === 0 && targetColumn === 7) || // Peón en columna A intentando capturar hacia la izquierda
-            (originColumn === 7 && targetColumn === 0)    // Peón en columna H intentando capturar hacia la derecha
+            (originColumn === 0 && targetColumn === 7) || 
+            (originColumn === 7 && targetColumn === 0)    
         ) {
-            return false; // Movimiento inválido
+            return false; 
         }
 
         return true;
@@ -204,7 +201,6 @@ export const isKingMoveLegal = (
             }
             return true;
         } else if (target === 62 && !whiteRookMoved?.right) {
-            // Enroque largo blanco
             if (
                 !isPathClear(origin, target + 1, boardState, 0, 1) || 
                 isKingInCheck(origin, boardState, color) || 

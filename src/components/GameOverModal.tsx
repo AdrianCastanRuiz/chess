@@ -1,16 +1,17 @@
-import { Color } from "../types/types"
 import styles from './GameOver.module.css'
 
 interface GameOverProps {
-    winner: Color,
+    winner: 'White' | 'Black',
     reason: string,
-    setGameOver: any
+    resetValues: any,
     }
- const GameOverModal = ({winner, reason, setGameOver}: GameOverProps)=> {
+ const GameOverModal = ({winner, reason, resetValues}: GameOverProps)=> {
+
+    
     return(
         <div className={styles.container}>
             <p>{winner} wins by {reason}</p> 
-            <button onClick={()=>setGameOver(null)}>Start new game</button>               
+            <button onClick={resetValues}>Start new game</button>               
         </div>
     )
 }

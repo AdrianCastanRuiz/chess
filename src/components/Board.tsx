@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import styles from './Board.module.css';
-import { BoardState, Color, Piece, RockStatus, SelectedPiece } from '../types/types';
+import { BoardState, Color, Piece, RockStatus, SelectedPiece, GameOver } from '../types/types';
 import { isLegalMove } from '../validations/index.ts';
 import { isKingInCheck } from '../validations/isKingInCheck.ts';
 import { isCheckMate } from '../validations/isCheckMate.ts';
@@ -11,9 +11,11 @@ interface BoardProps {
     boardState: (null | Piece)[];
     setBoardState: React.Dispatch<React.SetStateAction<BoardState>>;
     setTurn: React.Dispatch<React.SetStateAction<Color>>;
+    resetGame: any
+
 }
 
-const Board = ({ turn, boardState, setBoardState, setTurn }: BoardProps) => {
+const Board = ({ turn, boardState, setBoardState, setTurn, resetGame }: BoardProps) => {
 
     const [selectedPiece, setSelectedPiece] = useState<null | SelectedPiece>(null);
     const [check, setIsCheck] = useState<'♔' | '♚' | ''>('');
@@ -21,9 +23,18 @@ const Board = ({ turn, boardState, setBoardState, setTurn }: BoardProps) => {
     const [blackKingMoved, setBlackKingMoved] = useState<boolean>(false);
     const [whiteRookMoved, setWhiteRookMoved] = useState<RockStatus>({ left: false, right: false });
     const [blackRookMoved, setBlackRookMoved] = useState<RockStatus>({ left: false, right: false });
-    const [gameOver, setGameOver] = useState<any>(null);
+    const [gameOver, setGameOver] = useState<GameOver | null>(null);
 
-
+    const resetValues = ()=>{
+        setSelectedPiece(null);
+        setIsCheck('');
+        setWhiteKingMoved(false);
+        setBlackKingMoved(false);
+        setWhiteRookMoved({left: false, right: false});
+        setBlackRookMoved({left: false, right: false});
+        setGameOver(null);
+        resetGame()
+    }
     const handleSquareClick = (index: number) => {
         const clickedPiece = boardState[index];
 
@@ -37,11 +48,9 @@ const Board = ({ turn, boardState, setBoardState, setTurn }: BoardProps) => {
             const { piece } = selectedPiece;
             const { figure } = piece;
 
-            // Actualizar si el rey se mueve
             if (figure === '♔' && !whiteKingMoved) setWhiteKingMoved(true);
             if (figure === '♚' && !blackKingMoved) setBlackKingMoved(true);
 
-            // Actualizar si las torres se mueven
             if (figure === '♖') {
                 if (selectedPiece.index === 56) setWhiteRookMoved(prev => ({ ...prev, left: true }));
                 if (selectedPiece.index === 63) setWhiteRookMoved(prev => ({ ...prev, right: true }));
@@ -51,7 +60,7 @@ const Board = ({ turn, boardState, setBoardState, setTurn }: BoardProps) => {
                 if (selectedPiece.index === 7) setBlackRookMoved(prev => ({ ...prev, right: true }));
             }
 
-            // Verificar si el movimiento es legal
+            
             if (!isLegalMove(selectedPiece, boardState, target, turn, whiteKingMoved, blackKingMoved, whiteRookMoved, blackRookMoved)) {
                 return;
             }
@@ -60,38 +69,36 @@ const Board = ({ turn, boardState, setBoardState, setTurn }: BoardProps) => {
             newBoardState[selectedPiece.index] = null;
             newBoardState[index] = selectedPiece.piece;
 
-            // Manejar el movimiento de la torre durante el enroque
+            
             if (figure === '♔' && (target === 58 || target === 62) && !whiteKingMoved) {
-                // Enroque blanco
-                if (target === 58) { // Enroque largo
-                    newBoardState[56] = null; // Torre izquierda
-                    newBoardState[59] = { figure: '♖', color: 'white' }; // Nueva posición
-                } else if (target === 62) { // Enroque corto
-                    newBoardState[63] = null; // Torre derecha
-                    newBoardState[61] = { figure: '♖', color: 'white' }; // Nueva posición
+                
+                if (target === 58) {
+                    newBoardState[56] = null; 
+                    newBoardState[59] = { figure: '♖', color: 'white' };
+                } else if (target === 62) { 
+                    newBoardState[63] = null; 
+                    newBoardState[61] = { figure: '♖', color: 'white' }; 
                 }
             } else if (figure === '♚' && (target === 2 || target === 6) && !blackKingMoved) {
-                // Enroque negro
-                if (target === 2) { // Enroque largo
-                    newBoardState[0] = null; // Torre izquierda
-                    newBoardState[3] = { figure: '♜', color: 'black' }; // Nueva posición
-                } else if (target === 6) { // Enroque corto
-                    newBoardState[7] = null; // Torre derecha
-                    newBoardState[5] = { figure: '♜', color: 'black' }; // Nueva posición
+               
+                if (target === 2) { 
+                    newBoardState[0] = null; 
+                    newBoardState[3] = { figure: '♜', color: 'black' }; 
+                } else if (target === 6) { 
+                    newBoardState[7] = null; 
+                    newBoardState[5] = { figure: '♜', color: 'black' }; 
                 }
             }
 
             setBoardState(newBoardState);
 
-            // Verificar si el rey enemigo está en jaque
             const enemyKingPosition = newBoardState.findIndex(
                 piece => piece?.figure === (turn === 'white' ? '♚' : '♔')
             );
             if (isKingInCheck(enemyKingPosition, newBoardState, turn === 'white' ? 'black' : 'white')) {
                 if(isCheckMate(enemyKingPosition, newBoardState,turn === 'white' ? 'black' : 'white' )) {
-                    alert("mate")
                     setGameOver({
-                        winner: turn as Color,
+                        winner: turn === 'white' ? 'White' : 'Black',
                         reason: "checkmate",
                     })
                 }
@@ -136,9 +143,10 @@ const Board = ({ turn, boardState, setBoardState, setTurn }: BoardProps) => {
     return(
         <>
                 <div className={styles.board}>{squares}</div>;
-                {gameOver && <GameOverModal winner={gameOver.winner} reason={gameOver.reason} setGameOver={setGameOver} />}
+                {gameOver && <GameOverModal winner={gameOver.winner} reason={gameOver.reason} resetValues={resetValues} />}
                 </>
     ) 
+
 };
 
 export default Board;
