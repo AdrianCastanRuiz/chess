@@ -11,7 +11,6 @@ export const isCheckMate = (
     color: Color
 ): boolean => {
     const kingOffsets = [-9, -8, -7, -1, 1, 7, 8, 9];
-   console.log(boardState)
     for (const offset of kingOffsets) {
         const target = kingPosition + offset;
 

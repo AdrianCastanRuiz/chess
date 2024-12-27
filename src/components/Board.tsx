@@ -69,6 +69,7 @@ const Board = ({ turn, boardState, setBoardState, setTurn, resetGame }: BoardPro
             newBoardState[selectedPiece.index] = null;
             newBoardState[index] = selectedPiece.piece;
 
+
             
             if (figure === '♔' && (target === 58 || target === 62) && !whiteKingMoved) {
                 
@@ -130,11 +131,17 @@ const Board = ({ turn, boardState, setBoardState, setTurn, resetGame }: BoardPro
                     ${check && piece?.figure === check && selectedPiece?.piece.figure === piece.figure ? styles.kingIsInCheckandSelected : ''}
                 `}
                 onClick={() => handleSquareClick(i)}
+                
             >
+                    <span style={{fontSize: "12px"}}>{i}</span>
                 {piece && (
+                    <>
+                    
                     <span className={styles.chessIcon}>
-                        {piece.figure}
+                        {piece.figure} 
                     </span>
+                    </>
+                
                 )}
             </div>
         );

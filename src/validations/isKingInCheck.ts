@@ -41,7 +41,8 @@ export const isKingInCheck = (
     const directionsStraight = [1, -1, 8, -8];
     for (const direction of directionsStraight) {
         if (isThreatenedInDirection(kingPosition, direction, boardState, enemyColor, ['♖', '♜', '♕', '♛'])) {
-
+                console.log("kingposition:", kingPosition, "amenaza: ",boardState[39], "direction:", direction)
+               
             return true;
         }
     }
@@ -49,6 +50,7 @@ export const isKingInCheck = (
     const directionsDiagonal = [9, -9, 7, -7];
     for (const direction of directionsDiagonal) {
         if (isThreatenedInDirection(kingPosition, direction, boardState, enemyColor, ['♗', '♝', '♕', '♛'])) {
+
 
             return true;
         }
@@ -85,18 +87,21 @@ const isThreatenedInDirection = (
         current >= 0 &&
         current < 64 &&
         (
-            direction === 8 || direction === -8 || 
-            (Math.floor(current / 8) === Math.floor(position / 8) && (direction === 1 || direction === -1)) || 
-            Math.abs(Math.floor(current / 8) - Math.floor((current - direction) / 8)) === 1 
+            // Validación para movimientos verticales (8, -8)
+            (direction === 8 || direction === -8) ||
+            // Validación para movimientos horizontales (1, -1)
+            ((direction === 1 || direction === -1) && Math.floor(current / 8) === Math.floor(position / 8)) ||
+            // Validación para movimientos diagonales (9, -9, 7, -7)
+            Math.abs(Math.floor(current / 8) - Math.floor((current - direction) / 8)) === 1
         )
     ) {
-
         const piece = boardState[current];
         if (piece) {
             if (piece.color === enemyColor && threateningPieces.includes(piece.figure)) {
+                console.log("Amenaza detectada en posición: ", current, " por pieza: ", piece);
                 return true;
             }
-            break; 
+            break; // Detener búsqueda al encontrar cualquier pieza
         }
         current += direction;
     }

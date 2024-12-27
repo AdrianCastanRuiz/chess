@@ -35,7 +35,6 @@ const resetGame = ()=>{
         setBoardState(initialBoard);
 
     }, [resetBoard]);
-
     return (
         <>
 
