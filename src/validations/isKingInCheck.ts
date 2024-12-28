@@ -1,12 +1,14 @@
 import { BoardState, Color } from "../types/types";
 import { knightMoves } from "./movementValidations";
 
+const directionsStraight = [1, -1, 8, -8];
+const directionsDiagonal = [9, -9, 7, -7];
+
 export const isKingInCheck = (
     kingPosition: number,
     boardState: BoardState,
     color: Color,
 ): boolean => {
-
 
     const enemyColor: Color = color === 'white' ? 'black' : 'white';
     const pawnCaptureOffsets: number[] = color === 'white' ? [-9, -7] : [7, 9];
@@ -38,17 +40,17 @@ export const isKingInCheck = (
         }
     }
 
-    const directionsStraight = [1, -1, 8, -8];
     for (const direction of directionsStraight) {
         if (isThreatenedInDirection(kingPosition, direction, boardState, enemyColor, ['♖', '♜', '♕', '♛'])) {
-                console.log("kingposition:", kingPosition, "amenaza: ",boardState[39], "direction:", direction)
-               
+            console.log(direction)
+
             return true;
         }
     }
 
-    const directionsDiagonal = [9, -9, 7, -7];
     for (const direction of directionsDiagonal) {
+        //9 -9 7 -7
+
         if (isThreatenedInDirection(kingPosition, direction, boardState, enemyColor, ['♗', '♝', '♕', '♛'])) {
 
 
@@ -87,21 +89,17 @@ const isThreatenedInDirection = (
         current >= 0 &&
         current < 64 &&
         (
-            // Validación para movimientos verticales (8, -8)
             (direction === 8 || direction === -8) ||
-            // Validación para movimientos horizontales (1, -1)
             ((direction === 1 || direction === -1) && Math.floor(current / 8) === Math.floor(position / 8)) ||
-            // Validación para movimientos diagonales (9, -9, 7, -7)
-            Math.abs(Math.floor(current / 8) - Math.floor((current - direction) / 8)) === 1
+            (directionsDiagonal.includes(direction) && Math.abs(Math.floor(current / 8) - Math.floor((current - direction) / 8)) === 1)
         )
     ) {
         const piece = boardState[current];
         if (piece) {
             if (piece.color === enemyColor && threateningPieces.includes(piece.figure)) {
-                console.log("Amenaza detectada en posición: ", current, " por pieza: ", piece);
                 return true;
             }
-            break; // Detener búsqueda al encontrar cualquier pieza
+            break;
         }
         current += direction;
     }
