@@ -45,7 +45,6 @@ export const isPawnMoveLegal = (
         return true;
     }
 
-    // Captura
     const captureMoves = [direction - 1, direction + 1];
     if (
         captureMoves.includes(target - origin) &&

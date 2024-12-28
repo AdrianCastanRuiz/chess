@@ -43,7 +43,6 @@ const getPawnMoves = (index: number, boardState: BoardState, color: Color): numb
     const startRow = color === 'white' ? 6 : 1;
     const moves: number[] = [];
 
-    // Avanzar una casilla
     if (!boardState[index + direction]) {
         moves.push(index + direction);
     }

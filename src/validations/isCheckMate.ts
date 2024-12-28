@@ -1,4 +1,4 @@
-import { BoardState, Color, Piece, SelectedPiece } from "../types/types";
+import { BoardState, Color } from "../types/types";
 import { isLegalMove } from ".";
 import { isKingInCheck } from "./isKingInCheck";
 import { getPossibleTargets } from "./getPossibleTargets";
@@ -39,7 +39,6 @@ export const isCheckMate = (
         const piece = boardState[i];
 
         if (piece && piece.color === color && piece.figure !== "♔" && piece.figure !== "♚") {
-            console.log(i, piece.figure, piece.color)
             const possibleTargets = getPossibleTargets(i, piece, boardState);
 
             for (const target of possibleTargets) {
@@ -52,7 +51,6 @@ export const isCheckMate = (
                         color
                     )
                 ) {
-                    console.log(i, piece.figure, piece.color)
                     const simulatedBoard = [...boardState];
                     simulatedBoard[target] = simulatedBoard[i];
                     simulatedBoard[i] = null;

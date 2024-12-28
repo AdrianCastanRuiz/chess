@@ -42,15 +42,12 @@ export const isKingInCheck = (
 
     for (const direction of directionsStraight) {
         if (isThreatenedInDirection(kingPosition, direction, boardState, enemyColor, ['♖', '♜', '♕', '♛'])) {
-            console.log(direction)
 
             return true;
         }
     }
 
     for (const direction of directionsDiagonal) {
-        //9 -9 7 -7
-
         if (isThreatenedInDirection(kingPosition, direction, boardState, enemyColor, ['♗', '♝', '♕', '♛'])) {
 
 
