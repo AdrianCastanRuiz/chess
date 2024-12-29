@@ -27,7 +27,8 @@ export const isPawnMoveLegal = (
     origin: number,
     target: number,
     boardState: BoardState,
-    color: Color
+    color: Color,
+    lastPawnMoved?: number | null,
 ): boolean => {
     const direction = color === 'white' ? -8 : 8;
     const startRow = color === 'white' ? 6 : 1;
@@ -42,14 +43,17 @@ export const isPawnMoveLegal = (
         !boardState[target] &&
         !boardState[origin + direction]
     ) {
+
+
         return true;
     }
 
     const captureMoves = [direction - 1, direction + 1];
     if (
-        captureMoves.includes(target - origin) &&
-        boardState[target] &&
-        boardState[target].color !== color
+        (captureMoves.includes(target - origin) &&
+        (boardState[target]) &&
+        boardState[target].color !== color) || 
+        (lastPawnMoved && Math.abs(target - lastPawnMoved) === 8)
     ) {
         const originColumn = origin % 8;
         const targetColumn = target % 8;

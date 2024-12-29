@@ -23,15 +23,16 @@ const Board = ({ turn, boardState, setBoardState, setTurn, resetGame }: BoardPro
     const [blackKingMoved, setBlackKingMoved] = useState<boolean>(false);
     const [whiteRookMoved, setWhiteRookMoved] = useState<RockStatus>({ left: false, right: false });
     const [blackRookMoved, setBlackRookMoved] = useState<RockStatus>({ left: false, right: false });
+    const [lastPawnMoved, setLastPawnMoved] = useState<number | null>(null);
     const [gameOver, setGameOver] = useState<GameOver | null>(null);
 
-    const resetValues = ()=>{
+    const resetValues = () => {
         setSelectedPiece(null);
         setIsCheck('');
         setWhiteKingMoved(false);
         setBlackKingMoved(false);
-        setWhiteRookMoved({left: false, right: false});
-        setBlackRookMoved({left: false, right: false});
+        setWhiteRookMoved({ left: false, right: false });
+        setBlackRookMoved({ left: false, right: false });
         setGameOver(null);
         resetGame()
     }
@@ -44,6 +45,7 @@ const Board = ({ turn, boardState, setBoardState, setTurn, resetGame }: BoardPro
         }
 
         if (selectedPiece) {
+            const origin = selectedPiece.index;
             const target = index;
             const { piece } = selectedPiece;
             const { figure } = piece;
@@ -60,44 +62,64 @@ const Board = ({ turn, boardState, setBoardState, setTurn, resetGame }: BoardPro
                 if (selectedPiece.index === 7) setBlackRookMoved(prev => ({ ...prev, right: true }));
             }
 
-            
-            if (!isLegalMove(selectedPiece, boardState, target, turn, whiteKingMoved, blackKingMoved, whiteRookMoved, blackRookMoved)) {
+
+            if (!isLegalMove
+                (
+                    selectedPiece,
+                    boardState,
+                    target,
+                    turn,
+                    whiteKingMoved,
+                    blackKingMoved,
+                    whiteRookMoved,
+                    blackRookMoved,
+                    lastPawnMoved
+                )
+            ) {
                 return;
             }
-
             const newBoardState = [...boardState];
+      
+
+            if((figure === '♟' || figure === '♙') && lastPawnMoved && Math.abs(target - lastPawnMoved) === 8){
+                
+                newBoardState[lastPawnMoved!] = null;            
+
+            }
             newBoardState[selectedPiece.index] = null;
             newBoardState[index] = selectedPiece.piece;
 
 
-            
+            ((figure === '♙' || figure === '♟') && Math.abs(origin - target) === 16) ? 
+            setLastPawnMoved(target) : setLastPawnMoved(null);
+
             if (figure === '♔' && (target === 58 || target === 62) && !whiteKingMoved) {
-                
+
                 if (target === 58) {
-                    newBoardState[56] = null; 
+                    newBoardState[56] = null;
                     newBoardState[59] = { figure: '♖', color: 'white' };
-                } else if (target === 62) { 
-                    newBoardState[63] = null; 
-                    newBoardState[61] = { figure: '♖', color: 'white' }; 
+                } else if (target === 62) {
+                    newBoardState[63] = null;
+                    newBoardState[61] = { figure: '♖', color: 'white' };
                 }
             } else if (figure === '♚' && (target === 2 || target === 6) && !blackKingMoved) {
-               
-                if (target === 2) { 
-                    newBoardState[0] = null; 
-                    newBoardState[3] = { figure: '♜', color: 'black' }; 
-                } else if (target === 6) { 
-                    newBoardState[7] = null; 
-                    newBoardState[5] = { figure: '♜', color: 'black' }; 
+
+                if (target === 2) {
+                    newBoardState[0] = null;
+                    newBoardState[3] = { figure: '♜', color: 'black' };
+                } else if (target === 6) {
+                    newBoardState[7] = null;
+                    newBoardState[5] = { figure: '♜', color: 'black' };
                 }
             }
-
+          
             setBoardState(newBoardState);
 
             const enemyKingPosition = newBoardState.findIndex(
                 piece => piece?.figure === (turn === 'white' ? '♚' : '♔')
             );
             if (isKingInCheck(enemyKingPosition, newBoardState, turn === 'white' ? 'black' : 'white')) {
-                if(isCheckMate(enemyKingPosition, newBoardState,turn === 'white' ? 'black' : 'white' )) {
+                if (isCheckMate(enemyKingPosition, newBoardState, turn === 'white' ? 'black' : 'white')) {
                     setGameOver({
                         winner: turn === 'white' ? 'White' : 'Black',
                         reason: "checkmate",
@@ -131,28 +153,27 @@ const Board = ({ turn, boardState, setBoardState, setTurn, resetGame }: BoardPro
                     ${check && piece?.figure === check && selectedPiece?.piece.figure === piece.figure ? styles.kingIsInCheckandSelected : ''}
                 `}
                 onClick={() => handleSquareClick(i)}
-                
+
             >
-                    <span style={{fontSize: "12px"}}>{i}</span>
+          
                 {piece && (
                     <>
-                    
-                    <span className={styles.chessIcon}>
-                        {piece.figure} 
-                    </span>
+                        <span className={styles.chessIcon}>
+                            {piece.figure}
+                        </span>
                     </>
-                
+
                 )}
             </div>
         );
     }
 
-    return(
+    return (
         <>
-                <div className={styles.board}>{squares}</div>;
-                {gameOver && <GameOverModal winner={gameOver.winner} reason={gameOver.reason} resetValues={resetValues} />}
-                </>
-    ) 
+            <div className={styles.board}>{squares}</div>;
+            {gameOver && <GameOverModal winner={gameOver.winner} reason={gameOver.reason} resetValues={resetValues} />}
+        </>
+    )
 
 };
 

@@ -12,3 +12,8 @@
     background-color: aliceblue;
     border: 1px solid black;
 }
+
+.button{
+    padding: 0.5rem;
+    cursor: pointer;
+}

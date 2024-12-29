@@ -11,7 +11,7 @@ interface GameOverProps {
     return(
         <div className={styles.container}>
             <p>{winner} wins by {reason}</p> 
-            <button onClick={resetValues}>Start new game</button>               
+            <button className={styles.button} onClick={resetValues}>Start new game</button>               
         </div>
     )
 }

@@ -17,7 +17,8 @@ export const isLegalMove = (
     whiteKingMoved?: boolean,
     blackKingMoved?: boolean,
     whiteRookMoved?: RockStatus,
-    blackRookMoved?: RockStatus
+    blackRookMoved?: RockStatus,
+    lastPawnMoved?: number | null,
 ): boolean => {
     const origin = selectedPiece.index;
     const { figure, color } = selectedPiece.piece;
@@ -34,7 +35,7 @@ export const isLegalMove = (
 
         case "♙":
         case "♟":
-            isValidMove = isPawnMoveLegal(origin, targetIndex, boardState, color);
+            isValidMove = isPawnMoveLegal(origin, targetIndex, boardState, color, lastPawnMoved);
             break;
 
         case "♗":
