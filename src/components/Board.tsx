@@ -129,6 +129,8 @@ const Board = ({ turn, boardState, setBoardState, setTurn, resetGame }: BoardPro
             } else {
                 setIsCheck('');
             }
+            
+            //if(isStaleMate())
 
             setSelectedPiece(null);
             setTurn(turn === 'white' ? 'black' : 'white');
