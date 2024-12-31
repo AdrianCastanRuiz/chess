@@ -79,19 +79,22 @@ const Board = ({ turn, boardState, setBoardState, setTurn, resetGame }: BoardPro
                 return;
             }
             const newBoardState = [...boardState];
-      
 
-            if((figure === '♟' || figure === '♙') && lastPawnMoved && Math.abs(target - lastPawnMoved) === 8){
-                
-                newBoardState[lastPawnMoved!] = null;            
+            if (lastPawnMoved) console.log(origin - lastPawnMoved)
+
+
+            if ((figure === '♟' || figure === '♙') && lastPawnMoved && Math.abs(target - lastPawnMoved) === 8 &&
+                Math.abs(origin - lastPawnMoved) === 1) {
+
+                newBoardState[lastPawnMoved!] = null;
 
             }
             newBoardState[selectedPiece.index] = null;
             newBoardState[index] = selectedPiece.piece;
 
 
-            ((figure === '♙' || figure === '♟') && Math.abs(origin - target) === 16) ? 
-            setLastPawnMoved(target) : setLastPawnMoved(null);
+            ((figure === '♙' || figure === '♟') && Math.abs(origin - target) === 16) ?
+                setLastPawnMoved(target) : setLastPawnMoved(null);
 
             if (figure === '♔' && (target === 58 || target === 62) && !whiteKingMoved) {
 
@@ -112,7 +115,7 @@ const Board = ({ turn, boardState, setBoardState, setTurn, resetGame }: BoardPro
                     newBoardState[5] = { figure: '♜', color: 'black' };
                 }
             }
-          
+
             setBoardState(newBoardState);
 
             const enemyKingPosition = newBoardState.findIndex(
@@ -129,7 +132,7 @@ const Board = ({ turn, boardState, setBoardState, setTurn, resetGame }: BoardPro
             } else {
                 setIsCheck('');
             }
-            
+
             //if(isStaleMate())
 
             setSelectedPiece(null);
@@ -157,7 +160,7 @@ const Board = ({ turn, boardState, setBoardState, setTurn, resetGame }: BoardPro
                 onClick={() => handleSquareClick(i)}
 
             >
-          
+
                 {piece && (
                     <>
                         <span className={styles.chessIcon}>
