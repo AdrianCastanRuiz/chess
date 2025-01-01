@@ -160,7 +160,6 @@ const Board = ({ turn, boardState, setBoardState, setTurn, resetGame }: BoardPro
                 onClick={() => handleSquareClick(i)}
 
             >
-            {i}
 
                 {piece && (
                     <>

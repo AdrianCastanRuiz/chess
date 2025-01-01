@@ -54,7 +54,6 @@ export const isLegalMove = (
 
         case "♔":
         case "♚":
-            isValidMove = true
             isValidMove = isKingMoveLegal(origin, targetIndex, boardState, color, whiteKingMoved, blackKingMoved, whiteRookMoved, blackRookMoved);
             break;
 
