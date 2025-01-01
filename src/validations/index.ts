@@ -22,7 +22,6 @@ export const isLegalMove = (
 ): boolean => {
     const origin = selectedPiece.index;
     const { figure, color } = selectedPiece.piece;
-
     if (color !== turn) return false;
 
     let isValidMove = false;
@@ -55,6 +54,7 @@ export const isLegalMove = (
 
         case "♔":
         case "♚":
+            isValidMove = true
             isValidMove = isKingMoveLegal(origin, targetIndex, boardState, color, whiteKingMoved, blackKingMoved, whiteRookMoved, blackRookMoved);
             break;
 

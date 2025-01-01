@@ -5,6 +5,7 @@ import { isLegalMove } from '../validations/index.ts';
 import { isKingInCheck } from '../validations/isKingInCheck.ts';
 import { isCheckMate } from '../validations/isCheckMate.ts';
 import GameOverModal from './GameOverModal.tsx';
+import { isStaleMate } from '../validations/isStaleMate.ts';
 
 interface BoardProps {
     turn: Color;
@@ -80,7 +81,6 @@ const Board = ({ turn, boardState, setBoardState, setTurn, resetGame }: BoardPro
             }
             const newBoardState = [...boardState];
 
-            if (lastPawnMoved) console.log(origin - lastPawnMoved)
 
 
             if ((figure === '♟' || figure === '♙') && lastPawnMoved && Math.abs(target - lastPawnMoved) === 8 &&
@@ -133,7 +133,7 @@ const Board = ({ turn, boardState, setBoardState, setTurn, resetGame }: BoardPro
                 setIsCheck('');
             }
 
-            //if(isStaleMate())
+            if(isStaleMate(enemyKingPosition, newBoardState, turn === 'white' ? 'black' : 'white')) alert("stalemate")
 
             setSelectedPiece(null);
             setTurn(turn === 'white' ? 'black' : 'white');
@@ -160,6 +160,7 @@ const Board = ({ turn, boardState, setBoardState, setTurn, resetGame }: BoardPro
                 onClick={() => handleSquareClick(i)}
 
             >
+            {i}
 
                 {piece && (
                     <>

@@ -183,7 +183,6 @@ export const isKingMoveLegal = (
 ): boolean => {
     const rowOrigin = Math.floor(origin / 8);
     const colOrigin = origin % 8;
-
     const rowTarget = Math.floor(target / 8);
     const colTarget = target % 8;
 
