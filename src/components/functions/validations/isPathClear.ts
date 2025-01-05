@@ -1,4 +1,4 @@
-import { Piece } from "../types/types";
+import { Piece } from "../../../types/types";
 
 export const isPathClear = (
     origin: number,

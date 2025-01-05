@@ -1,20 +1,24 @@
 export type Color = 'white' | 'black';
+
 export type WhiteFigure = '♖' |'♘' | '♗' | '♕' | '♔' | '♙';
+
 export type BlackFigure = '♜'| '♞' | '♝' | '♛' | '♚' | '♟';
+
+export type Figure = WhiteFigure | BlackFigure;
+
 export interface Piece {
     color: Color,
-    figure: WhiteFigure | BlackFigure,
+    figure: Figure,
 };
+
 export interface SelectedPiece {
     index: number,
     piece: Piece,
-}
+};
+
 export type BoardState = (Piece | null)[];
+
 export interface RockStatus {
     left: boolean,
     right: boolean,
-}
-export interface GameOver {
-    winner: 'White' | 'Black',
-    reason: 'checkmate' | 'resignation',
-}
+};

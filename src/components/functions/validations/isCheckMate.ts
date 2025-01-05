@@ -1,4 +1,4 @@
-import { BoardState, Color } from "../types/types";
+import { BoardState, Color } from "../../../types/types";
 import { isLegalMove } from ".";
 import { isKingInCheck } from "./isKingInCheck";
 import { getPossibleTargets } from "./getPossibleTargets";

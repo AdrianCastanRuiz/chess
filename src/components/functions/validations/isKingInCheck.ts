@@ -1,4 +1,4 @@
-import { BoardState, Color } from "../types/types";
+import { BoardState, Color } from "../../../types/types";
 import { knightMoves } from "./movementValidations";
 
 const directionsStraight = [1, -1, 8, -8];

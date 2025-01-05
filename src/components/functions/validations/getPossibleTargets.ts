@@ -1,4 +1,4 @@
-import { BoardState, Color, Piece } from "../types/types";
+import { BoardState, Color, Piece } from "../../../types/types";
 
 const knightMoves = [-17, -15, -10, -6, 6, 10, 15, 17];
 const kingMoves = [-9, -8, -7, -1, 1, 7, 8, 9];
@@ -45,9 +45,13 @@ const getKingMoves = (index: number, boardState: BoardState, color: Color): numb
             const currentRow = Math.floor(index / 8);
             const targetRow = Math.floor(target / 8);
 
-            // Si el movimiento es horizontal (-1, +1), verifica si cruza filas
+            // Si el movimiento es horizontal o diagonal, asegúrate de que no cruza filas
             if (Math.abs(target - index) === 1 && currentRow !== targetRow) return false;
-            if(Math.abs(target - index) === 7 && currentRow === targetRow) return false;
+            if (Math.abs(target - index) === 7 && currentRow !== targetRow - 1) return false;
+            if (Math.abs(target - index) === 9 && currentRow !== targetRow - 1) return false;
+
+            if (Math.abs(target - index) === -7 && currentRow !== targetRow + 1) return false;
+            if (Math.abs(target - index) === -9 && currentRow !== targetRow + 1) return false;
 
             // Evitar capturar piezas del mismo color
             const targetPiece = boardState[target];
@@ -56,6 +60,7 @@ const getKingMoves = (index: number, boardState: BoardState, color: Color): numb
             return true;
         });
 };
+
 
 
 const getKnightMoves = (index: number): number[] => {

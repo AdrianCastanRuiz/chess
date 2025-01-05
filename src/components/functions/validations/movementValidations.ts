@@ -1,8 +1,23 @@
-import { BoardState, Color, Piece, RockStatus } from "../types/types";
+import { BoardState, Color, Piece, RockStatus } from "../../../types/types";
 import { isKingInCheck } from "./isKingInCheck";
 import { isPathClear } from "./isPathClear";
 
 export const knightMoves = [-17, -15, -10, -6, 6, 10, 15, 17];
+
+export const isOneStepMove = (
+    origin: number,
+    target: number
+)=>{
+    
+    const rowOrigin = Math.floor(origin / 8);
+    const colOrigin = origin % 8;
+    const rowTarget = Math.floor(target / 8);
+    const colTarget = target % 8;
+
+    return Math.abs(rowTarget - rowOrigin) <= 1 && Math.abs(colTarget - colOrigin) <= 1;
+
+
+}
 
 export const isKnightMoveLegal = (
     origin: number,
@@ -181,55 +196,75 @@ export const isKingMoveLegal = (
     whiteRookMoved?: RockStatus,
     blackRookMoved?: RockStatus,
 ): boolean => {
-    const rowOrigin = Math.floor(origin / 8);
-    const colOrigin = origin % 8;
-    const rowTarget = Math.floor(target / 8);
-    const colTarget = target % 8;
+   
+    if (isOneStepMove(origin, target)) {
+        const targetPiece = boardState[target];
+        if (targetPiece && targetPiece.color === color) {
+            // No puedes moverte a una casilla ocupada por tu propia pieza
+            return false;
+        }
 
-    const isOneStepMove =
-        Math.abs(rowTarget - rowOrigin) <= 1 && Math.abs(colTarget - colOrigin) <= 1;
+        // Simular el movimiento y verificar si el rey está en jaque
+        const simulatedBoard = [...boardState];
+        simulatedBoard[target] = simulatedBoard[origin];
+        simulatedBoard[origin] = null;
+
+        if (isKingInCheck(target, simulatedBoard, color)) {
+            return false;
+        }
+        return true;
+    }
 
     // Verificar enroque
     if (color === "white" && !whiteKingMoved) {
+        // Enroque largo (blancas)
         if (target === 58 && !whiteRookMoved?.left) {
-           
             if (
                 !isPathClear(origin, target - 1, boardState, 0, -1) || 
                 isKingInCheck(origin, boardState, color) || 
                 isKingInCheck(origin - 1, boardState, color) || 
-                isKingInCheck(origin - 2, boardState, color) 
-            ) {
-                return false;
-            }
-            return true;
-        } else if (target === 62 && !whiteRookMoved?.right) {
-            if (
-                !isPathClear(origin, target + 1, boardState, 0, 1) || 
-                isKingInCheck(origin, boardState, color) || 
-                isKingInCheck(origin + 1, boardState, color) || 
-                isKingInCheck(origin + 2, boardState, color) 
+                isKingInCheck(origin - 2, boardState, color)
             ) {
                 return false;
             }
             return true;
         }
-    } else if (color === "black" && !blackKingMoved) {
+
+        // Enroque corto (blancas)
+        if (target === 62 && !whiteRookMoved?.right) {
+            if (
+                !isPathClear(origin, target + 1, boardState, 0, 1) || 
+                isKingInCheck(origin, boardState, color) || 
+                isKingInCheck(origin + 1, boardState, color) || 
+                isKingInCheck(origin + 2, boardState, color)
+            ) {
+                return false;
+            }
+            return true;
+        }
+    }
+
+    if (color === "black" && !blackKingMoved) {
+        // Enroque largo (negras)
         if (target === 2 && !blackRookMoved?.left) {
             if (
                 !isPathClear(origin, target - 1, boardState, 0, -1) || 
                 isKingInCheck(origin, boardState, color) || 
                 isKingInCheck(origin - 1, boardState, color) || 
-                isKingInCheck(origin - 2, boardState, color) 
+                isKingInCheck(origin - 2, boardState, color)
             ) {
                 return false;
             }
             return true;
-        } else if (target === 6 && !blackRookMoved?.right) {
+        }
+
+        // Enroque corto (negras)
+        if (target === 6 && !blackRookMoved?.right) {
             if (
                 !isPathClear(origin, target + 1, boardState, 0, 1) || 
                 isKingInCheck(origin, boardState, color) || 
                 isKingInCheck(origin + 1, boardState, color) || 
-                isKingInCheck(origin + 2, boardState, color) 
+                isKingInCheck(origin + 2, boardState, color)
             ) {
                 return false;
             }
@@ -237,22 +272,8 @@ export const isKingMoveLegal = (
         }
     }
 
-    if (!isOneStepMove) return false; 
-
-    const targetPiece = boardState[target];
-    if (targetPiece && targetPiece.color === color) return false;
-
-    const simulatedBoard = [...boardState];
-    simulatedBoard[target] = simulatedBoard[origin];
-    simulatedBoard[origin] = null;
-
-    if (isKingInCheck(target, simulatedBoard, color)) {
-        return false;
-    }
-    return true;
+    // Si no es un movimiento válido, retorna falso
+    return false;
 };
-
-
-
 
 

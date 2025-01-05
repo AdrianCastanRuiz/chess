@@ -1,4 +1,4 @@
-import { Color, Piece, RockStatus, SelectedPiece } from "../types/types";
+import { Color, Piece, RockStatus, SelectedPiece } from "../../../types/types";
 import { isKingInCheck } from "./isKingInCheck";
 import {
     isBishopMoveLegal,

@@ -1,4 +1,4 @@
-import { BoardState, Color } from "../types/types";
+import { BoardState, Color } from "../../../types/types";
 import { isKingInCheck } from "./isKingInCheck";
 import { getPossibleTargets } from "./getPossibleTargets";
 
@@ -15,6 +15,7 @@ export const isStaleMate = (
 
     for (const { piece, index } of pieces) {
         const possibleTargets = getPossibleTargets(index, piece!, boardState);
+        console.log(possibleTargets)
 
         for (const target of possibleTargets) {
             const simulatedBoard = [...boardState];
@@ -25,7 +26,10 @@ export const isStaleMate = (
                 piece?.figure === "♔" || piece?.figure === "♚" ? target : kingPosition;
 
             if (!isKingInCheck(newKingPosition, simulatedBoard, turn)) {
+                console.log(index)
+                console.log(target)
                 return false;
+                
             }
         }
     }
