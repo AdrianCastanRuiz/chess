@@ -8,6 +8,7 @@ import { enemyKingStatus } from './functions/enemyKingStatus.ts';
 import { isOneStepMove } from './functions/validations/movementValidations.ts';
 import { castle } from './functions/castle.ts';
 import { handleRoockMove } from './functions/handleRoockMove.ts';
+import { handleKingMove } from './functions/handleKingMove.ts';
 
 interface BoardProps {
     turn: Color;
@@ -74,8 +75,15 @@ const Board = ({ turn, boardState, setBoardState, setTurn, resetGame }: BoardPro
                 return;
             }
 
-            let newBoardState = [...boardState];
-
+            let newBoardState:BoardState = [...boardState];
+            
+            if(figure === '♔' || figure === '♚'){
+                handleKingMove(
+                    setWhiteKingMoved,
+                    setBlackKingMoved,
+                    origin
+                )
+            }
             if ((figure === '♖' || figure === '♜')) {
                 handleRoockMove(
                     setWhiteRookMoved,
@@ -104,6 +112,7 @@ const Board = ({ turn, boardState, setBoardState, setTurn, resetGame }: BoardPro
 
             newBoardState[origin] = null;
             newBoardState[target] = selectedPiece.piece;
+       
             if ((figure === '♔' || figure === '♚') && !isOneStepMove(origin, target)) {
                 newBoardState = castle(newBoardState, target);
             }
